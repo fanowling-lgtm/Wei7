@@ -2,40 +2,63 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Wei7</title>
+  <title>Anonymous Feed</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div id="container">
   <div id="header">
-    <h1>Wei7</h1>
-    <a href="login.html">Login</a>
-    <span id="welcome"></span>
+    <h1>Anonymous Feed</h1>
   </div>
 
-  <div id="layout">
-    <div class="sidebar">
-      <div class="box">
-        <b>Status</b>
-        <p id="status">Not logged in</p>
-      </div>
+  <div class="main">
+    <div class="box">
+      <textarea id="postText" rows="3" placeholder="Say something..."></textarea>
+      <button onclick="createPost()">Post</button>
     </div>
 
-    <div class="main">
-      <div class="box" id="postBox" style="display:none;">
-        <textarea id="postText" rows="3"></textarea>
-        <button onclick="createPost()">Post</button>
-      </div>
-
-      <div class="box">
-        <b>Timeline</b>
-        <div id="feed"></div>
-      </div>
+    <div class="box">
+      <b>Feed</b>
+      <div id="feed"></div>
     </div>
   </div>
 </div>
 
-<script src="js/supabase.js"></script>
-<script src="js/feed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const supabase = supabase.createClient(
+  "https://lkeoattyhyhedxwrglqp.supabase.co",
+  "sb_publishable_MnFPPwedzzYj-aGkIaiwHw_BEX_FWtE"
+);
+
+async function loadFeed() {
+  const { data: posts } = await supabase
+    .from("posts")
+    .select("*")
+    .order("created_at",{ascending:false})
+    .limit(50);
+
+  const feed = document.getElementById("feed");
+  feed.innerHTML = "";
+  posts.forEach(p=>{
+    const div = document.createElement("div");
+    div.className = "post";
+    div.innerHTML = `<div><b>You</b></div><div>${p.content}</div><div class="post-time">${new Date(p.created_at).toLocaleString()}</div>`;
+    feed.appendChild(div);
+  });
+}
+
+async function createPost() {
+  const text = document.getElementById("postText").value;
+  if(!text) return;
+
+  await supabase.from("posts").insert({content: text});
+  document.getElementById("postText").value = "";
+  loadFeed();
+}
+
+// Initial load
+loadFeed();
+</script>
 </body>
 </html>
