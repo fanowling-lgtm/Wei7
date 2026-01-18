@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Wei7</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="utf-8">
+<title>Wei7</title>
+<style>
+body { margin:0; font-family:Arial,Helvetica,sans-serif; background:#e6e6e6; color:#222; }
+#container { width:700px; margin:20px auto; }
+#header { background:linear-gradient(#fff,#ddd); border:1px solid #aaa; padding:10px; margin-bottom:10px; }
+#header h1 { margin:0; font-size:24px; }
+.box { background:#fff; border:1px solid #aaa; padding:8px; margin-bottom:10px; }
+.post { border-bottom:1px dashed #ccc; padding:6px 0; }
+.post:last-child { border-bottom:none; }
+.post-time { font-size:11px; color:#666; }
+textarea { width:100%; box-sizing:border-box; }
+button { font-size:12px; padding:4px 8px; margin-top:4px; }
+</style>
 </head>
 <body>
+
 <div id="container">
-  <div id="header">
-    <h1>Wei7</h1>
+  <div id="header"><h1>Wei7</h1></div>
+
+  <div class="box">
+    <textarea id="postText" rows="3" placeholder="Say something..."></textarea>
+    <button onclick="createPost()">Post</button>
   </div>
 
-  <div class="main">
-    <div class="box">
-      <textarea id="postText" rows="3" placeholder="Say something..."></textarea>
-      <button onclick="createPost()">Post</button>
-    </div>
-
-    <div class="box">
-      <b>Feed</b>
-      <div id="feed"></div>
-    </div>
+  <div class="box">
+    <b>Wei7 Feed</b>
+    <div id="feed"></div>
   </div>
 </div>
 
@@ -33,44 +41,37 @@ const supabase = supabase.createClient(
 
 const feedEl = document.getElementById("feed");
 
-// Load initial feed
+// Load existing posts
 async function loadFeed() {
   const { data: posts } = await supabase
     .from("posts")
     .select("*")
-    .order("created_at",{ascending:false})
+    .order("created_at",{ascending:true})
     .limit(50);
 
   feedEl.innerHTML = "";
-  posts.reverse().forEach(p => addPostElement(p));
+  posts.forEach(addPostElement);
 }
 
 // Add post element to feed
 function addPostElement(post){
   const div = document.createElement("div");
   div.className = "post";
-  div.innerHTML = `
-    <div><b>You</b></div>
-    <div>${post.content}</div>
-    <div class="post-time">${new Date(post.created_at).toLocaleTimeString()}</div>
-  `;
+  div.innerHTML = `<div><b>You</b></div><div>${post.content}</div><div class="post-time">${new Date(post.created_at).toLocaleTimeString()}</div>`;
   feedEl.appendChild(div);
   feedEl.scrollTop = feedEl.scrollHeight;
 }
 
 // Create a new post
 async function createPost(){
-  const text = document.getElementById("postText").value;
+  const text = document.getElementById("postText").value.trim();
   if(!text) return;
-
-  await supabase.from("posts").insert({content: text});
+  await supabase.from("posts").insert({content:text});
   document.getElementById("postText").value = "";
 }
 
-// Realtime subscription
-supabase.from("posts").on("INSERT", payload => {
-  addPostElement(payload.new);
-}).subscribe();
+// Subscribe to realtime updates
+supabase.from("posts").on("INSERT", payload => addPostElement(payload.new)).subscribe();
 
 // Initial load
 loadFeed();
