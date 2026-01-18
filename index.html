@@ -28,9 +28,12 @@
 <script>
 const supabase = supabase.createClient(
   "https://lkeoattyhyhedxwrglqp.supabase.co",
-  "sb_publishable_MnFPPwedzzYj-aGkIaiwHw_BEX_FWtE"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrZW9hdHR5aHloZWR4d3JnbHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3NDAzNTIsImV4cCI6MjA4NDMxNjM1Mn0.PrCLodlhHQZbzNl6zoQTjRy2QyLuuZ5VZgHBQRmQwUs"
 );
 
+const feedEl = document.getElementById("feed");
+
+// Load initial feed
 async function loadFeed() {
   const { data: posts } = await supabase
     .from("posts")
@@ -38,24 +41,36 @@ async function loadFeed() {
     .order("created_at",{ascending:false})
     .limit(50);
 
-  const feed = document.getElementById("feed");
-  feed.innerHTML = "";
-  posts.forEach(p=>{
-    const div = document.createElement("div");
-    div.className = "post";
-    div.innerHTML = `<div><b>You</b></div><div>${p.content}</div><div class="post-time">${new Date(p.created_at).toLocaleString()}</div>`;
-    feed.appendChild(div);
-  });
+  feedEl.innerHTML = "";
+  posts.reverse().forEach(p => addPostElement(p));
 }
 
-async function createPost() {
+// Add post element to feed
+function addPostElement(post){
+  const div = document.createElement("div");
+  div.className = "post";
+  div.innerHTML = `
+    <div><b>You</b></div>
+    <div>${post.content}</div>
+    <div class="post-time">${new Date(post.created_at).toLocaleTimeString()}</div>
+  `;
+  feedEl.appendChild(div);
+  feedEl.scrollTop = feedEl.scrollHeight;
+}
+
+// Create a new post
+async function createPost(){
   const text = document.getElementById("postText").value;
   if(!text) return;
 
   await supabase.from("posts").insert({content: text});
   document.getElementById("postText").value = "";
-  loadFeed();
 }
+
+// Realtime subscription
+supabase.from("posts").on("INSERT", payload => {
+  addPostElement(payload.new);
+}).subscribe();
 
 // Initial load
 loadFeed();
