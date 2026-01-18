@@ -42,10 +42,12 @@ body {
   font-size: 11px;
   color: #666;
 }
+
 textarea {
   width: 100%;
   box-sizing: border-box;
 }
+
 button {
   font-size: 12px;
   padding: 4px 8px;
