@@ -6,12 +6,12 @@ body {
 }
 
 #container {
-  width: 900px;
-  margin: 0 auto;
+  width: 700px;
+  margin: 20px auto;
 }
 
 #header {
-  background: #ddd;
+  background: linear-gradient(#fff, #ddd);
   border: 1px solid #aaa;
   padding: 10px;
   margin-bottom: 10px;
@@ -19,23 +19,10 @@ body {
 
 #header h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 24px;
 }
 
-#layout {
-  display: flex;
-  gap: 10px;
-}
-
-.sidebar {
-  width: 220px;
-}
-
-.main {
-  flex: 1;
-}
-
-.box {
+.main .box {
   background: #fff;
   border: 1px solid #aaa;
   padding: 8px;
@@ -51,31 +38,15 @@ body {
   border-bottom: none;
 }
 
-.post-user {
-  font-weight: bold;
-  font-size: 13px;
-}
-
 .post-time {
   font-size: 11px;
   color: #666;
 }
-
 textarea {
   width: 100%;
   box-sizing: border-box;
 }
-
 button {
   font-size: 12px;
   padding: 4px 8px;
-}
-
-a {
-  color: #0056aa;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
 }
