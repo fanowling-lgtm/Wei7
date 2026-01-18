@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Profile</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style id="customCSS"></style>
+</head>
+<body>
+<div id="container">
+  <div class="box">
+    <h2 id="username"></h2>
+    <p id="bio"></p>
+    <button id="followBtn"></button>
+  </div>
+
+  <div class="box" id="cssEditor" style="display:none;">
+    <b>Profile CSS</b>
+    <textarea id="cssText" rows="6"></textarea>
+    <button onclick="saveCSS()">Save</button>
+  </div>
+
+  <div class="box">
+    <b>Posts</b>
+    <div id="posts"></div>
+  </div>
+</div>
+
+<script src="js/supabase.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/follow.js"></script>
+</body>
+</html>
