@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Login - Wei7</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="container">
+  <div class="box">
+    <h3>Login</h3>
+    <input id="email" placeholder="Email">
+    <button onclick="login()">Send Magic Link</button>
+  </div>
+</div>
+
+<script src="js/supabase.js"></script>
+<script>
+async function login() {
+  const email = document.getElementById("email").value;
+  const { error } = await supabase.auth.signInWithOtp({ email });
+  if(error) alert(error.message);
+  else alert("Check your email for the login link!");
+}
+</script>
+</body>
+</html>
